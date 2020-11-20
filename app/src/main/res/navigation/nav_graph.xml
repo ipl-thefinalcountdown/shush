@@ -3,26 +3,25 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/FirstFragment">
+    app:startDestination="@id/mapsFragment">
 
     <fragment
-        android:id="@+id/FirstFragment"
-        android:name="pt.ipleiria.taes.shush.FirstFragment"
-        android:label="@string/first_fragment_label"
-        tools:layout="@layout/fragment_first">
-
+        android:id="@+id/mapsFragment"
+        android:name="pt.ipleiria.taes.shush.MapsFragment"
+        android:label="fragment_map"
+        tools:layout="@layout/fragment_map" >
         <action
-            android:id="@+id/action_FirstFragment_to_SecondFragment"
-            app:destination="@id/SecondFragment" />
+            android:id="@+id/action_mapsFragment_to_recordFragment"
+            app:destination="@id/recordFragment"
+            app:enterAnim="@animator/fade_in"
+            app:exitAnim="@animator/fade_out"
+            app:popEnterAnim="@animator/fade_in"
+            app:popExitAnim="@animator/fade_out" />
     </fragment>
+
     <fragment
-        android:id="@+id/SecondFragment"
-        android:name="pt.ipleiria.taes.shush.SecondFragment"
-        android:label="@string/second_fragment_label"
-        tools:layout="@layout/fragment_second">
-
-        <action
-            android:id="@+id/action_SecondFragment_to_FirstFragment"
-            app:destination="@id/FirstFragment" />
-    </fragment>
+        android:id="@+id/recordFragment"
+        android:name="pt.ipleiria.taes.shush.RecordFragment"
+        android:label="fragment_record"
+        tools:layout="@layout/fragment_record" />
 </navigation>

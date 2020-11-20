@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_centerInParent="false"
+    android:layout_centerHorizontal="false"
+    android:orientation="vertical"
+    tools:context=".RecordFragment">
+
+    <Chronometer
+        android:id="@+id/chronometer_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|left"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginRight="10dp"
+        android:format="00:00"
+        android:textSize="36sp"
+        android:visibility="visible" />
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center">
+
+        <TextView
+            android:id="@+id/sound_dB"
+            android:layout_width="wrap_content"
+            android:layout_height="123dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="35dp"
+            android:text="0 dB"
+            android:textAlignment="center"
+            android:textSize="36sp" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/record_toggle"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:adjustViewBounds="false"
+            android:backgroundTint="@color/recorder_background"
+            android:clickable="true"
+            android:src="@drawable/ic_baseline_fiber_manual_record_24"
+            app:backgroundTint="@color/recorder_background"
+            app:fabCustomSize="100dp"
+            app:fabSize="auto"
+            app:layout_anchor="@+id/sound_dB"
+            app:layout_anchorGravity="bottom|center"
+            app:maxImageSize="37.5dp" />
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+</FrameLayout>
