@@ -4,6 +4,14 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <ImageView
+        android:id="@+id/zzz"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        app:srcCompat="@drawable/ic_zzz"
+        app:tint="@color/colorPrimary" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/record_fab"
         android:layout_width="wrap_content"

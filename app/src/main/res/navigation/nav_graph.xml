@@ -7,11 +7,11 @@
 
     <fragment
         android:id="@+id/mapsFragment"
-        android:name="pt.ipleiria.taes.shush.MapsFragment"
+        android:name="pt.ipleiria.taes.shush.DashboardFragment"
         android:label="fragment_map"
-        tools:layout="@layout/fragment_map" >
+        tools:layout="@layout/fragment_dashboard" >
         <action
-            android:id="@+id/action_mapsFragment_to_recordFragment"
+            android:id="@+id/action_dashboardFragment_to_recordFragment"
             app:destination="@id/recordFragment"
             app:enterAnim="@animator/fade_in"
             app:exitAnim="@animator/fade_out"
