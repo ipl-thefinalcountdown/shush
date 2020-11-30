@@ -13,14 +13,14 @@ import android.view.ViewGroup;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-public class MapsFragment extends Fragment {
+public class DashboardFragment extends Fragment {
     // Fragment Tag for Logging
-    private static final String TAG = MapsFragment.class.getSimpleName();
+    private static final String TAG = DashboardFragment.class.getSimpleName();
 
     public class RecordButtonListener implements View.OnClickListener {
         @Override
         public void onClick(View view) {
-            Navigation.findNavController(view).navigate(R.id.action_mapsFragment_to_recordFragment);
+            Navigation.findNavController(view).navigate(R.id.action_dashboardFragment_to_recordFragment);
         }
     }
 
@@ -28,7 +28,7 @@ public class MapsFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
     {
-        return inflater.inflate(R.layout.fragment_map, container, false);
+        return inflater.inflate(R.layout.fragment_dashboard, container, false);
     }
 
     @Override

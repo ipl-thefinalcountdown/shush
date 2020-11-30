@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import pt.ipleiria.taes.shush.R;
+import pt.ipleiria.taes.shush.utils.Locator;
 
 public class MainActivity extends AppCompatActivity {
     // Activity Tag
@@ -23,6 +24,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        // get permissions on start
+        new Locator(this).getLocationPermission();
     }
 
     @Override

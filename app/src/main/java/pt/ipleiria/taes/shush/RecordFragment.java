@@ -1,8 +1,10 @@
 package pt.ipleiria.taes.shush;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.media.AudioManager;
 import android.media.MediaRecorder;
 import android.os.Build;
@@ -14,23 +16,35 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import org.json.JSONException;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import pt.ipleiria.taes.shush.utils.LocalMeasurements;
+import pt.ipleiria.taes.shush.utils.Locator;
+import pt.ipleiria.taes.shush.utils.Measurement;
 
 public class RecordFragment extends Fragment {
     private static final String TAG = RecordFragment.class.getSimpleName();
@@ -45,11 +59,71 @@ public class RecordFragment extends Fragment {
     private List<Double> mesurements;
 
     private FloatingActionButton recorder;
+    private FloatingActionButton listButton;
+
     private RecordButtonListener listener;
     private Chronometer chronometer;
     private TextView soundDecibel;
+    private Button saveButton;
+    private LocalMeasurements localMeasurements;
+    private Locator locator;
+    private ProgressDialog dialog;
 
-    public RecordFragment() {
+    private double average;
+
+    /**
+     * Listener for LocationResult task
+     */
+    private class LocationResultListener implements OnCompleteListener<Location> {
+
+        @Override
+        public void onComplete(@NonNull Task<Location> task) {
+            if (task.isSuccessful()) {
+                dialog.dismiss();
+                Location location = locator.getLastKnownLocation();
+                if(location != null) {
+                    Measurement measurement = new Measurement(average, new Date(), location.getLatitude(), location.getLongitude());
+                    try {
+                        localMeasurements.add(measurement);
+                    } catch(IOException | JSONException ex)
+                    {
+                        Toast.makeText(getContext(), "Can't save the measurement!", Toast.LENGTH_LONG).show();
+                    }
+
+                    Toast.makeText(getContext(), "Measurement saved!", Toast.LENGTH_LONG).show();
+                    saveButton.setVisibility(View.INVISIBLE);
+                    Log.d(TAG,"Location acquired");
+                }
+                else {
+                    Toast.makeText(getContext(), "Can't get location!", Toast.LENGTH_LONG).show();
+                }
+            } else {
+                Log.d(TAG, "Can't get location");
+            }
+        }
+    }
+
+    private class MeasurementsButtonListener implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            Navigation.findNavController(v).navigate(R.id.action_recordFragment_to_measurementFragment);
+        }
+    }
+
+    private class SaveButtonListener implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+            if(localMeasurements != null)
+            {
+                dialog = ProgressDialog.show(getActivity(), "",
+                        "Getting device location...", true);
+                locator.getDeviceLocation(new LocationResultListener());
+            }
+        }
+    }
+
+    public RecordFragment()
+    {
         // Required empty public constructor
     }
 
@@ -72,6 +146,22 @@ public class RecordFragment extends Fragment {
 
         chronometer = getActivity().findViewById(R.id.chronometer_time);
         soundDecibel = getActivity().findViewById(R.id.sound_dB);
+        saveButton = getActivity().findViewById(R.id.save_btn);
+        saveButton.setVisibility(View.INVISIBLE);
+        saveButton.setOnClickListener(new SaveButtonListener());
+
+        try {
+            localMeasurements = new LocalMeasurements(getContext());
+        } catch(IOException | JSONException ex)
+        {
+            Toast.makeText(getContext(), ex.getMessage(), Toast.LENGTH_LONG).show();
+        }
+
+        locator = new Locator(getActivity());
+        locator.getLocationPermission();
+
+        listButton = getActivity().findViewById(R.id.measurement_list_btn);
+        listButton.setOnClickListener(new MeasurementsButtonListener());
 
         mesurements = new ArrayList<>();
     }
@@ -103,6 +193,13 @@ public class RecordFragment extends Fragment {
 
     private void startRecording() {
         mediaRecorder = new MediaRecorder();
+        locator.getDeviceLocation();
+        saveButton.post(new Runnable() {
+            @Override
+            public void run() {
+                saveButton.setVisibility(View.INVISIBLE);
+            }
+        });
         AudioManager audioManager = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
         mediaRecorder.setAudioSource(
                 audioManager.getProperty(AudioManager.PROPERTY_SUPPORT_AUDIO_SOURCE_UNPROCESSED) != null
@@ -139,15 +236,26 @@ public class RecordFragment extends Fragment {
         }
         recorder.setImageResource(R.drawable.ic_baseline_fiber_manual_record_24);
         chronometer.stop();
+        average = mesurements.size() > 1
+                ? mesurements.stream().reduce((a, b) -> a + b).get() / mesurements.size()
+                : 0;
         soundDecibel.post(new Runnable() {
             @RequiresApi(api = Build.VERSION_CODES.N)
             public void run() {
-                double avg = mesurements.size() > 1
-                    ? mesurements.stream().reduce((a, b) -> a + b).get() / mesurements.size()
-                    : 0;
-                soundDecibel.setText(String.format("%2.0f dB", avg));
+                soundDecibel.setText(String.format("%2.0f dB", average));
             }
         });
+
+        if(mesurements.size() > 1)
+        {
+            mesurements.clear();
+            saveButton.post(new Runnable() {
+                @Override
+                public void run() {
+                    saveButton.setVisibility(View.VISIBLE);
+                }
+            });
+        }
         Log.d(TAG, "Recording stopped!");
     }
 
