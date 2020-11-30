@@ -8,10 +8,23 @@
     android:layout_centerHorizontal="false"
     android:orientation="vertical"
     tools:context=".RecordFragment">
+x
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/measurement_list_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|right"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:clickable="true"
+        android:src="@drawable/ic_baseline_format_list_bulleted_24"
+        app:backgroundTint="@color/colorSecondary"
+        app:fabSize="mini" />
 
     <Chronometer
         android:id="@+id/chronometer_time"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|left"
         android:layout_marginLeft="10dp"
@@ -20,6 +33,16 @@
         android:format="00:00"
         android:textSize="36sp"
         android:visibility="visible" />
+
+    <Button
+        android:id="@+id/save_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
+        android:text="@string/save"
+        tools:visibility="invisible" />
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="wrap_content"
@@ -51,6 +74,7 @@
             app:layout_anchor="@+id/sound_dB"
             app:layout_anchorGravity="bottom|center"
             app:maxImageSize="37.5dp" />
+
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 </FrameLayout>
