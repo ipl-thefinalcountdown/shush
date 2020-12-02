@@ -21,6 +21,8 @@ android {
         if (file("../secure.properties").exists()) {
             file("../secure.properties")?.withInputStream { secureProps.load(it) }
         }
+
+        resValue "string", "googlemaps_api_key", (secureProps.getProperty("GOOGLEMAPS_API_KEY") ?: "")
     }
 
     buildTypes {
