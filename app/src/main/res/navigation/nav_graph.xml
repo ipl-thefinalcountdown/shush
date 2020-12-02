@@ -38,4 +38,10 @@
         android:name="pt.ipleiria.taes.shush.MeasurementFragment"
         android:label="fragment_measurement"
         tools:layout="@layout/fragment_measurement_list" />
+
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="pt.ipleiria.taes.shush.MapsFragment"
+        android:label="fragment_map"
+        tools:layout="@layout/fragment_map" />
 </navigation>

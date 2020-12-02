@@ -12,5 +12,8 @@
 
     <string name="menu_dashboard">Dashboard</string>
     <string name="menu_map">Map</string>
-    <string name="menu_measurements">Measurements</string>
+    <string name="menu_measurements">My measurements</string>
+
+    <string name="shared">Shared</string>
+    <string name="local">Local</string>
 </resources>
