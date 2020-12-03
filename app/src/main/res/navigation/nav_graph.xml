@@ -3,10 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/mapsFragment">
+    app:startDestination="@id/dashboardFragment">
 
     <fragment
-        android:id="@+id/mapsFragment"
+        android:id="@+id/dashboardFragment"
         android:name="pt.ipleiria.taes.shush.DashboardFragment"
         android:label="fragment_map"
         tools:layout="@layout/fragment_dashboard" >
@@ -38,4 +38,10 @@
         android:name="pt.ipleiria.taes.shush.MeasurementFragment"
         android:label="fragment_measurement"
         tools:layout="@layout/fragment_measurement_list" />
+
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="pt.ipleiria.taes.shush.MapsFragment"
+        android:label="fragment_map"
+        tools:layout="@layout/fragment_map" />
 </navigation>

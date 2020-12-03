@@ -6,4 +6,14 @@
     <string name="previous">Previous</string>
 
     <string name="save">Save</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_desc">Navigation header</string>
+
+    <string name="menu_dashboard">Dashboard</string>
+    <string name="menu_map">Map</string>
+    <string name="menu_measurements">My measurements</string>
+
+    <string name="shared">Shared</string>
+    <string name="local">Local</string>
 </resources>

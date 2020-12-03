@@ -24,7 +24,7 @@ public class Locator{
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private boolean locationPermissionGranted;
 
-    private final LatLng DEFAULT_LOCATION = new LatLng(-33.8523341, 151.2106085);
+    public static final LatLng DEFAULT_LOCATION = new LatLng(-33.8523341, 151.2106085);
 
     private Location lastKnownLocation;
     // The entry point to the Fused Location Provider.
@@ -100,6 +100,7 @@ public class Locator{
      */
     public void getLocationPermission()
     {
+        if(locationPermissionGranted) return;
         /*
          * Request location permission, so that we can get the location of the
          * device. The result of the permission request is handled by a callback,
@@ -116,7 +117,23 @@ public class Locator{
         }
     }
 
+    public boolean isLocationPermissionGranted() {
+        return locationPermissionGranted;
+    }
+
+    public void setLocationPermissionGranted(boolean locationPermissionGranted) {
+        this.locationPermissionGranted = locationPermissionGranted;
+    }
+
+    public FusedLocationProviderClient getFusedLocationProviderClient() {
+        return fusedLocationProviderClient;
+    }
+
     public Location getLastKnownLocation() {
         return lastKnownLocation;
+    }
+
+    public void setLastKnownLocation(Location lastKnownLocation) {
+        this.lastKnownLocation = lastKnownLocation;
     }
 }
