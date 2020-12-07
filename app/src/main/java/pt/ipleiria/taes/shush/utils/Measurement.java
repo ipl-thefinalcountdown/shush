@@ -7,6 +7,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Measurement
 {
@@ -71,6 +73,17 @@ public class Measurement
         return jsonMeasurement;
     }
 
+    public Map<String, Object> toHashMap()
+    {
+        Map<String, Object> hashmapMeasurement = new HashMap<>();
+        hashmapMeasurement.put("intensity", dB);
+        hashmapMeasurement.put("date", date);
+        hashmapMeasurement.put("lat", latitude);
+        hashmapMeasurement.put("lon", longitude);
+
+        return hashmapMeasurement;
+    }
+
     public static Measurement fromJSONObject(JSONObject jsonObject)
             throws JSONException, ParseException
     {
@@ -79,6 +92,17 @@ public class Measurement
         measurement.dB = jsonObject.getDouble("intensity");
         measurement.longitude = jsonObject.getDouble("lon");
         measurement.latitude = jsonObject.getDouble("lat");
+
+        return measurement;
+    }
+
+    public static Measurement fromHashMap(Map<String, Object> hashmap)
+    {
+        Measurement measurement = new Measurement();
+        measurement.date = (Date) hashmap.get("date");
+        measurement.dB = (Double) hashmap.get("intensity");
+        measurement.longitude = (Double) hashmap.get("lon");
+        measurement.latitude = (Double) hashmap.get("lat");
 
         return measurement;
     }

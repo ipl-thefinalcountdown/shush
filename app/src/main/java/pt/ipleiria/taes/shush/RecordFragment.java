@@ -31,6 +31,7 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.firestore.DocumentReference;
 
 import org.json.JSONException;
 
@@ -45,6 +46,7 @@ import java.util.TimerTask;
 import pt.ipleiria.taes.shush.utils.LocalMeasurements;
 import pt.ipleiria.taes.shush.utils.Locator;
 import pt.ipleiria.taes.shush.utils.Measurement;
+import pt.ipleiria.taes.shush.utils.SharedMeasurements;
 
 public class RecordFragment extends Fragment {
     private static final String TAG = RecordFragment.class.getSimpleName();
@@ -65,16 +67,36 @@ public class RecordFragment extends Fragment {
     private Chronometer chronometer;
     private TextView soundDecibel;
     private Button saveButton;
+    private Button shareButton;
     private LocalMeasurements localMeasurements;
+    private SharedMeasurements sharedMeasurements;
     private Locator locator;
     private ProgressDialog dialog;
 
     private double average;
 
+    private class SharedMeasurementListener implements OnCompleteListener<DocumentReference> {
+        @Override
+        public void onComplete(@NonNull Task<DocumentReference> task) {
+            if(task.isSuccessful())
+            {
+                Toast.makeText(getContext(), "Measurement saved!", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(getContext(), "Measurement can't be saved!", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
     /**
      * Listener for LocationResult task
      */
     private class LocationResultListener implements OnCompleteListener<Location> {
+
+        boolean shareMeasurement;
+
+        public LocationResultListener(boolean share) {
+            this.shareMeasurement = share;
+        }
 
         @Override
         public void onComplete(@NonNull Task<Location> task) {
@@ -83,16 +105,22 @@ public class RecordFragment extends Fragment {
                 Location location = locator.getLastKnownLocation();
                 if(location != null) {
                     Measurement measurement = new Measurement(average, new Date(), location.getLatitude(), location.getLongitude());
-                    try {
-                        localMeasurements.add(measurement);
-                    } catch(IOException | JSONException ex)
+                    if(shareMeasurement)
                     {
-                        Toast.makeText(getContext(), "Can't save the measurement!", Toast.LENGTH_LONG).show();
-                    }
+                        sharedMeasurements.add(measurement)
+                                .addOnCompleteListener(new SharedMeasurementListener());
+                    } else {
+                        try {
+                            localMeasurements.add(measurement);
+                        } catch(IOException | JSONException ex)
+                        {
+                            Toast.makeText(getContext(), "Can't save the measurement!", Toast.LENGTH_LONG).show();
+                        }
 
-                    Toast.makeText(getContext(), "Measurement saved!", Toast.LENGTH_LONG).show();
-                    saveButton.setVisibility(View.INVISIBLE);
-                    Log.d(TAG,"Location acquired");
+                        Toast.makeText(getContext(), "Measurement saved!", Toast.LENGTH_LONG).show();
+                        setButtonsVisibility(View.INVISIBLE);
+                        Log.d(TAG,"Location acquired");
+                    }
                 }
                 else {
                     Toast.makeText(getContext(), "Can't get location!", Toast.LENGTH_LONG).show();
@@ -111,13 +139,21 @@ public class RecordFragment extends Fragment {
     }
 
     private class SaveButtonListener implements View.OnClickListener {
+        boolean shareMeasurement;
+
+        public SaveButtonListener(boolean share)
+        {
+            this.shareMeasurement = share;
+        }
+
         @Override
         public void onClick(View view) {
             if(localMeasurements != null)
             {
                 dialog = ProgressDialog.show(getActivity(), "",
                         "Getting device location...", true);
-                locator.getDeviceLocation(new LocationResultListener());
+                locator.getLocationPermission();
+                locator.getDeviceLocation(new LocationResultListener(shareMeasurement));
             }
         }
     }
@@ -147,8 +183,10 @@ public class RecordFragment extends Fragment {
         chronometer = getActivity().findViewById(R.id.chronometer_time);
         soundDecibel = getActivity().findViewById(R.id.sound_dB);
         saveButton = getActivity().findViewById(R.id.save_btn);
-        saveButton.setVisibility(View.INVISIBLE);
-        saveButton.setOnClickListener(new SaveButtonListener());
+        saveButton.setOnClickListener(new SaveButtonListener(false));
+        shareButton = getActivity().findViewById(R.id.share_btn);
+        shareButton.setOnClickListener(new SaveButtonListener(true));
+        setButtonsVisibility(View.INVISIBLE);
 
         try {
             localMeasurements = new LocalMeasurements(getContext());
@@ -156,6 +194,7 @@ public class RecordFragment extends Fragment {
         {
             Toast.makeText(getContext(), ex.getMessage(), Toast.LENGTH_LONG).show();
         }
+        sharedMeasurements = new SharedMeasurements();
 
         locator = new Locator(getActivity());
         locator.getLocationPermission();
@@ -191,13 +230,19 @@ public class RecordFragment extends Fragment {
             stopRecording();
     }
 
+    private void setButtonsVisibility(int visibility)
+    {
+        saveButton.setVisibility(visibility);
+        shareButton.setVisibility(visibility);
+    }
+
     private void startRecording() {
         mediaRecorder = new MediaRecorder();
         locator.getDeviceLocation();
         saveButton.post(new Runnable() {
             @Override
             public void run() {
-                saveButton.setVisibility(View.INVISIBLE);
+                setButtonsVisibility(View.INVISIBLE);
             }
         });
         AudioManager audioManager = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
@@ -252,7 +297,7 @@ public class RecordFragment extends Fragment {
             saveButton.post(new Runnable() {
                 @Override
                 public void run() {
-                    saveButton.setVisibility(View.VISIBLE);
+                    setButtonsVisibility(View.VISIBLE);
                 }
             });
         }
