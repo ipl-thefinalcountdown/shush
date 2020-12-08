@@ -1,5 +1,7 @@
 package pt.ipleiria.taes.shush.utils;
 
+import android.annotation.SuppressLint;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -105,5 +107,11 @@ public class Measurement
         measurement.latitude = (Double) hashmap.get("lat");
 
         return measurement;
+    }
+
+    @SuppressLint("DefaultLocale")
+    @Override
+    public String toString() {
+        return String.format("%2.0f dB", dB) + ", lat:" + latitude + ", lon:" + longitude + " (" + DATE_FORMAT.format(date) + ")";
     }
 }

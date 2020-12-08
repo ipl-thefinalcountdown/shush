@@ -17,4 +17,9 @@
 
     <string name="shared">Shared</string>
     <string name="local">Local</string>
+
+    <string name="dialog_confirmation_message">Are you sure?</string>
+
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 </resources>

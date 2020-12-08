@@ -1,8 +1,10 @@
 package pt.ipleiria.taes.shush;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.media.AudioManager;
@@ -84,6 +86,7 @@ public class RecordFragment extends Fragment {
             } else {
                 Toast.makeText(getContext(), "Measurement can't be saved!", Toast.LENGTH_LONG).show();
             }
+            setButtonsVisibility(View.INVISIBLE);
         }
     }
 
@@ -104,23 +107,37 @@ public class RecordFragment extends Fragment {
                 dialog.dismiss();
                 Location location = locator.getLastKnownLocation();
                 if(location != null) {
+                    Log.d(TAG,"Location acquired");
                     Measurement measurement = new Measurement(average, new Date(), location.getLatitude(), location.getLongitude());
-                    if(shareMeasurement)
-                    {
-                        sharedMeasurements.add(measurement)
-                                .addOnCompleteListener(new SharedMeasurementListener());
-                    } else {
-                        try {
-                            localMeasurements.add(measurement);
-                        } catch(IOException | JSONException ex)
-                        {
-                            Toast.makeText(getContext(), "Can't save the measurement!", Toast.LENGTH_LONG).show();
-                        }
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setMessage(getString(R.string.dialog_confirmation_message) + "\n\n" + measurement.toString())
+                            .setNegativeButton(R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface d, int id) {
+                                    d.dismiss();
+                                    if(shareMeasurement)
+                                    {
+                                        sharedMeasurements.add(measurement)
+                                                .addOnCompleteListener(new SharedMeasurementListener());
+                                    } else {
+                                        try {
+                                            localMeasurements.add(measurement);
+                                        } catch(IOException | JSONException ex)
+                                        {
+                                            Toast.makeText(getContext(), "Can't save the measurement!", Toast.LENGTH_LONG).show();
+                                        }
 
-                        Toast.makeText(getContext(), "Measurement saved!", Toast.LENGTH_LONG).show();
-                        setButtonsVisibility(View.INVISIBLE);
-                        Log.d(TAG,"Location acquired");
-                    }
+                                        Toast.makeText(getContext(), "Measurement saved!", Toast.LENGTH_LONG).show();
+                                        setButtonsVisibility(View.INVISIBLE);
+                                    }
+                                }
+                            })
+                            .setPositiveButton(R.string.no, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface d, int id) {
+                                    d.dismiss();
+                                }
+                            });
+                    // Create the AlertDialog object and return it
+                    builder.create().show();
                 }
                 else {
                     Toast.makeText(getContext(), "Can't get location!", Toast.LENGTH_LONG).show();
