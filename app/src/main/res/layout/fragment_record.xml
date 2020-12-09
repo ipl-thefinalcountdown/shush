@@ -66,7 +66,7 @@
         <TextView
             android:id="@+id/sound_dB"
             android:layout_width="wrap_content"
-            android:layout_height="123dp"
+            android:layout_height="143dp"
             android:layout_gravity="center"
             android:layout_marginBottom="35dp"
             android:text="0 dB"
@@ -87,6 +87,7 @@
             app:fabSize="auto"
             app:layout_anchor="@+id/sound_dB"
             app:layout_anchorGravity="bottom|center"
+            android:layout_margin="20dp"
             app:maxImageSize="37.5dp" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

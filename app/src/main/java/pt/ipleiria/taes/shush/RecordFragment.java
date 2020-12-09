@@ -45,6 +45,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import pt.ipleiria.taes.shush.activities.MainActivity;
 import pt.ipleiria.taes.shush.utils.LocalMeasurements;
 import pt.ipleiria.taes.shush.utils.Locator;
 import pt.ipleiria.taes.shush.utils.Measurement;
@@ -188,6 +189,8 @@ public class RecordFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        ((MainActivity) getActivity()).getFab().setVisibility(View.INVISIBLE);
 
         ActivityCompat.requestPermissions(getActivity(), permissions, REQUEST_AUDIO_PERMISSION);
         file = new File(getContext().getExternalCacheDir().getAbsolutePath() + "/shushaudio.3gp");

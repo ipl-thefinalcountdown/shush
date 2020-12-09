@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
 
+import pt.ipleiria.taes.shush.activities.MainActivity;
 import pt.ipleiria.taes.shush.utils.LocalMeasurements;
 import pt.ipleiria.taes.shush.utils.Locator;
 import pt.ipleiria.taes.shush.utils.Measurement;
@@ -149,6 +150,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     public void onActivityCreated(@Nullable Bundle savedInstanceState)
     {
         super.onActivityCreated(savedInstanceState);
+
+        ((MainActivity) getActivity()).getFab().setVisibility(View.VISIBLE);
 
         locator = new Locator(getActivity());
 

@@ -13,9 +13,12 @@ import androidx.navigation.ui.NavigationUI;
 
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
+import pt.ipleiria.taes.shush.DashboardFragment;
 import pt.ipleiria.taes.shush.R;
 import pt.ipleiria.taes.shush.utils.Locator;
 
@@ -27,6 +30,14 @@ public class MainActivity extends AppCompatActivity
     private NavController navController;
     private DrawerLayout drawer;
     private NavigationView navigationView;
+    private FloatingActionButton fab;
+
+    public class RecordButtonListener implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+            navController.navigate(R.id.recordFragment);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,8 +60,15 @@ public class MainActivity extends AppCompatActivity
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupWithNavController(navigationView, navController);
 
+        fab = findViewById(R.id.record_fab);
+        fab.setOnClickListener(new RecordButtonListener());
+
         // get permissions on start
         new Locator(this).getLocationPermission();
+    }
+
+    public FloatingActionButton getFab() {
+        return fab;
     }
 
     @Override
