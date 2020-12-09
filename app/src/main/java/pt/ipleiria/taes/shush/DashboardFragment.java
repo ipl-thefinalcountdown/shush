@@ -13,16 +13,11 @@ import android.view.ViewGroup;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import pt.ipleiria.taes.shush.activities.MainActivity;
+
 public class DashboardFragment extends Fragment {
     // Fragment Tag for Logging
     private static final String TAG = DashboardFragment.class.getSimpleName();
-
-    public class RecordButtonListener implements View.OnClickListener {
-        @Override
-        public void onClick(View view) {
-            Navigation.findNavController(view).navigate(R.id.action_dashboardFragment_to_recordFragment);
-        }
-    }
 
     @Nullable
     @Override
@@ -36,7 +31,6 @@ public class DashboardFragment extends Fragment {
     {
         super.onActivityCreated(savedInstanceState);
 
-        FloatingActionButton fab = getActivity().findViewById(R.id.record_fab);
-        fab.setOnClickListener(new RecordButtonListener());
+        ((MainActivity) getActivity()).getFab().setVisibility(View.VISIBLE);
     }
 }

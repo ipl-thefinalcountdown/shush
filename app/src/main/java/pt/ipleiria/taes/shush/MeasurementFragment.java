@@ -3,6 +3,7 @@ package pt.ipleiria.taes.shush;
 import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -20,6 +21,7 @@ import org.json.JSONException;
 import java.io.IOException;
 import java.text.ParseException;
 
+import pt.ipleiria.taes.shush.activities.MainActivity;
 import pt.ipleiria.taes.shush.utils.LocalMeasurements;
 import pt.ipleiria.taes.shush.utils.Locator;
 
@@ -90,5 +92,12 @@ public class MeasurementFragment extends Fragment {
             }
         }
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        ((MainActivity) getActivity()).getFab().setVisibility(View.VISIBLE);
     }
 }

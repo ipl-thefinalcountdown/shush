@@ -30,10 +30,28 @@
         android:fitsSystemWindows="true"
         tools:openDrawer="start">
 
-        <include
-            layout="@layout/content_main"
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent">
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/record_fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#C10F0F"
+                android:clickable="true"
+                app:backgroundTint="#C10F0F"
+                app:srcCompat="@drawable/ic_baseline_keyboard_voice_24"
+                android:layout_gravity="end|bottom"
+                android:layout_margin="@dimen/fab_margin"
+                android:focusable="true" />
+
+            <include
+                layout="@layout/content_main"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
         <com.google.android.material.navigation.NavigationView
             android:id="@+id/nav_view"

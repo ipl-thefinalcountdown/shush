@@ -17,5 +17,10 @@
             android:id="@+id/mapFragment"
             android:icon="@drawable/ic_baseline_map_24"
             android:title="@string/menu_map" />
+
+        <item
+            android:id="@+id/recordFragment"
+            android:icon="@drawable/ic_baseline_keyboard_voice_24"
+            android:title="@string/menu_record" />
     </group>
 </menu>

@@ -14,7 +14,13 @@
     <string name="menu_dashboard">Dashboard</string>
     <string name="menu_map">Map</string>
     <string name="menu_measurements">My measurements</string>
+    <string name="menu_record">Record</string>
 
     <string name="shared">Shared</string>
     <string name="local">Local</string>
+
+    <string name="dialog_confirmation_message">Are you sure?</string>
+
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 </resources>
