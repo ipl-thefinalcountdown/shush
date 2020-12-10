@@ -29,11 +29,16 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import org.json.JSONException;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 
 import pt.ipleiria.taes.shush.activities.MainActivity;
@@ -41,6 +46,7 @@ import pt.ipleiria.taes.shush.utils.LocalMeasurements;
 import pt.ipleiria.taes.shush.utils.Locator;
 import pt.ipleiria.taes.shush.utils.Measurement;
 import pt.ipleiria.taes.shush.utils.MeasurementPopup;
+import pt.ipleiria.taes.shush.utils.SharedMeasurements;
 
 
 public class MapsFragment extends Fragment implements OnMapReadyCallback {
@@ -64,7 +70,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
     private Locator locator;
     private LocalMeasurements localMeasurements;
+    private SharedMeasurements sharedMeasurements;
     private List<Measurement> measurements;
+    private TabLayout tabs;
 
     /**
      * Listener for LocationResult task
@@ -93,21 +101,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     private class CameraMoveListener implements GoogleMap.OnCameraIdleListener {
         @Override
         public void onCameraIdle() {
-            LatLngBounds bounds = map.getProjection().getVisibleRegion().latLngBounds;
-            loadLocalMeasurements();
-
-            if(measurements == null) return;
-
-            for (Measurement measurement: measurements) {
-                LatLng loc = new LatLng(measurement.getLatitude(), measurement.getLongitude());
-                if (bounds.contains(loc)) {
-                    // Add the marker.
-                    Log.d(TAG, "marker here");
-                    map.addMarker(new MarkerOptions()
-                            .position(loc))
-                            .setTag(measurement);
-                }
-            }
+            if(tabs.getSelectedTabPosition() == 0)
+                loadLocalMap();
+            else
+                loadSharedMap();
         }
     }
 
@@ -123,6 +120,74 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
             // for the default behavior to occur (which is for the camera to move such that the
             // marker is centered and for the marker's info window to open, if it has one).
             return false;
+        }
+    }
+
+    public class TabSelectedListener implements TabLayout.OnTabSelectedListener
+    {
+        @Override
+        public void onTabSelected(TabLayout.Tab tab)
+        {
+            if(tab.getPosition() == 0)
+                loadLocalMap();
+            else
+                loadSharedMap();
+        }
+
+        @Override
+        public void onTabUnselected(TabLayout.Tab tab) { }
+
+        @Override
+        public void onTabReselected(TabLayout.Tab tab)
+        {
+            onTabSelected(tab);
+        }
+    }
+
+    private void loadLocalMap()
+    {
+        loadLocalMeasurements();
+        reloadMap();
+    }
+
+    private void loadSharedMap()
+    {
+
+        loadSharedMeasurements().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful())
+                {
+                    List<DocumentSnapshot> documents = task.getResult().getDocuments();
+                    measurements = new ArrayList<>(documents.size());
+                    for (DocumentSnapshot document : documents)
+                    {
+                         measurements.add(Measurement.fromHashMap(document.getData()));
+                    }
+                    reloadMap();
+                } else {
+                    Toast.makeText(getContext(), "Measurements can't be loaded!", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+    }
+
+    private void reloadMap()
+    {
+        LatLngBounds bounds = map.getProjection().getVisibleRegion().latLngBounds;
+
+        if(measurements == null) return;
+
+        map.clear();
+        for (Measurement measurement: measurements) {
+            LatLng loc = new LatLng(measurement.getLatitude(), measurement.getLongitude());
+            if (bounds.contains(loc)) {
+                // Add the marker.
+                Log.d(TAG, "marker here");
+                map.addMarker(new MarkerOptions()
+                        .position(loc))
+                        .setTag(measurement);
+            }
         }
     }
 
@@ -146,6 +211,14 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
+    public Task<QuerySnapshot> loadSharedMeasurements()
+    {
+        if(sharedMeasurements == null)
+            sharedMeasurements = new SharedMeasurements();
+
+        return sharedMeasurements.getMeasurements();
+    }
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState)
     {
@@ -160,6 +233,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
             locator.setLastKnownLocation(savedInstanceState.getParcelable(KEY_LOCATION));
             cameraPosition = savedInstanceState.getParcelable(KEY_CAMERA_POSITION);
         }
+
+        tabs = getActivity().findViewById(R.id.tab_layout_map);
+        tabs.addOnTabSelectedListener(new TabSelectedListener());
 
         // Build the map container. This will obtain the SupportMapFragment and get notified when
         // the map is ready to be used.
