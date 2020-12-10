@@ -2,6 +2,8 @@ package pt.ipleiria.taes.shush.utils;
 
 import android.annotation.SuppressLint;
 
+import com.google.firebase.Timestamp;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -101,7 +103,12 @@ public class Measurement
     public static Measurement fromHashMap(Map<String, Object> hashmap)
     {
         Measurement measurement = new Measurement();
-        measurement.date = (Date) hashmap.get("date");
+        Object date = hashmap.get("date");
+        if(date instanceof Timestamp)
+            measurement.date = ((Timestamp) date).toDate();
+        else
+            measurement.date = (Date) date;
+
         measurement.dB = (Double) hashmap.get("intensity");
         measurement.longitude = (Double) hashmap.get("lon");
         measurement.latitude = (Double) hashmap.get("lat");

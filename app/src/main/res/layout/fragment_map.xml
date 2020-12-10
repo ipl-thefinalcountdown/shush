@@ -7,6 +7,7 @@
     tools:context=".MapsFragment">
 
     <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tab_layout_map"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
