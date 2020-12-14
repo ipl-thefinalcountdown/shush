@@ -17,7 +17,14 @@
             android:id="@+id/mapFragment"
             android:icon="@drawable/ic_baseline_map_24"
             android:title="@string/menu_map" />
-
+        <item
+            android:id="@+id/locationChartFragment"
+            android:icon="@drawable/ic_baseline_bar_chart_24"
+            android:title="@string/menu_location_chart" />
+        <item
+            android:id="@+id/timeChartFragment"
+            android:icon="@drawable/ic_baseline_show_chart_24"
+            android:title="@string/menu_time_chart" />
         <item
             android:id="@+id/recordFragment"
             android:icon="@drawable/ic_baseline_keyboard_voice_24"
