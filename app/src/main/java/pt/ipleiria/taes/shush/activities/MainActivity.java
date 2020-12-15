@@ -1,10 +1,12 @@
 package pt.ipleiria.taes.shush.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
@@ -19,6 +21,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
 import pt.ipleiria.taes.shush.DashboardFragment;
+import pt.ipleiria.taes.shush.NotificationService;
 import pt.ipleiria.taes.shush.R;
 import pt.ipleiria.taes.shush.utils.Locator;
 
@@ -65,6 +68,10 @@ public class MainActivity extends AppCompatActivity
 
         // get permissions on start
         new Locator(this).getLocationPermission();
+
+        // Notification service
+        Intent serviceIntent = new Intent(this, NotificationService.class);
+        ContextCompat.startForegroundService(this, serviceIntent);
     }
 
     public FloatingActionButton getFab() {
