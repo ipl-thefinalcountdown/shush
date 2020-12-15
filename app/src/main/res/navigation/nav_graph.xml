@@ -44,4 +44,16 @@
         android:name="pt.ipleiria.taes.shush.MapsFragment"
         android:label="fragment_map"
         tools:layout="@layout/fragment_map" />
+
+    <fragment
+        android:id="@+id/timeChartFragment"
+        android:name="pt.ipleiria.taes.shush.TimeChartFragment"
+        android:label="fragment_time_chart"
+        tools:layout="@layout/fragment_time_chart" />
+
+    <fragment
+        android:id="@+id/locationChartFragment"
+        android:name="pt.ipleiria.taes.shush.LocationChartFragment"
+        android:label="fragment_location_chart"
+        tools:layout="@layout/fragment_location_chart" />
 </navigation>

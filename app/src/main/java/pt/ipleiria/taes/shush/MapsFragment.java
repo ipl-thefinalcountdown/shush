@@ -46,6 +46,7 @@ import pt.ipleiria.taes.shush.utils.LocalMeasurements;
 import pt.ipleiria.taes.shush.utils.Locator;
 import pt.ipleiria.taes.shush.utils.Measurement;
 import pt.ipleiria.taes.shush.utils.MeasurementPopup;
+import pt.ipleiria.taes.shush.utils.MeasurementsLoader;
 import pt.ipleiria.taes.shush.utils.SharedMeasurements;
 
 
@@ -69,9 +70,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     private static final String KEY_LOCATION = "location";
 
     private Locator locator;
-    private LocalMeasurements localMeasurements;
-    private SharedMeasurements sharedMeasurements;
-    private List<Measurement> measurements;
+    private MeasurementsLoader measurementsLoader;
     private TabLayout tabs;
 
     /**
@@ -146,23 +145,22 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
     private void loadLocalMap()
     {
-        loadLocalMeasurements();
+        measurementsLoader.loadLocalMeasurements();
         reloadMap();
     }
 
     private void loadSharedMap()
     {
-
-        loadSharedMeasurements().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        measurementsLoader.loadSharedMeasurements().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if(task.isSuccessful())
                 {
                     List<DocumentSnapshot> documents = task.getResult().getDocuments();
-                    measurements = new ArrayList<>(documents.size());
+                    measurementsLoader.setMeasurements(new ArrayList<>(documents.size()));
                     for (DocumentSnapshot document : documents)
                     {
-                         measurements.add(Measurement.fromHashMap(document.getData()));
+                        measurementsLoader.getMeasurements().add(Measurement.fromHashMap(document.getData()));
                     }
                     reloadMap();
                 } else {
@@ -176,10 +174,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     {
         LatLngBounds bounds = map.getProjection().getVisibleRegion().latLngBounds;
 
-        if(measurements == null) return;
+        if(measurementsLoader.getMeasurements() == null) return;
 
         map.clear();
-        for (Measurement measurement: measurements) {
+        for (Measurement measurement: measurementsLoader.getMeasurements()) {
             LatLng loc = new LatLng(measurement.getLatitude(), measurement.getLongitude());
             if (bounds.contains(loc)) {
                 // Add the marker.
@@ -198,27 +196,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         return inflater.inflate(R.layout.fragment_map, container, false);
     }
 
-    public void loadLocalMeasurements()
-    {
-        try {
-            if(localMeasurements == null)
-                localMeasurements = new LocalMeasurements(getContext());
-
-            measurements = localMeasurements.getMeasurements();
-        } catch(IOException | JSONException | ParseException ex)
-        {
-            Toast.makeText(getContext(), "Can't load measurements!", Toast.LENGTH_LONG).show();
-        }
-    }
-
-    public Task<QuerySnapshot> loadSharedMeasurements()
-    {
-        if(sharedMeasurements == null)
-            sharedMeasurements = new SharedMeasurements();
-
-        return sharedMeasurements.getMeasurements();
-    }
-
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState)
     {
@@ -227,6 +204,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         ((MainActivity) getActivity()).getFab().setVisibility(View.VISIBLE);
 
         locator = new Locator(getActivity());
+        measurementsLoader = new MeasurementsLoader(getContext());
 
         // Retrieve location and camera position from saved instance state.
         if (savedInstanceState != null) {
