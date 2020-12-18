@@ -87,7 +87,7 @@ public class RecordFragment extends Fragment {
             } else {
                 Toast.makeText(getContext(), "Measurement can't be saved!", Toast.LENGTH_LONG).show();
             }
-            setButtonsVisibility(View.INVISIBLE);
+            shareButton.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -128,7 +128,7 @@ public class RecordFragment extends Fragment {
                                         }
 
                                         Toast.makeText(getContext(), "Measurement saved!", Toast.LENGTH_LONG).show();
-                                        setButtonsVisibility(View.INVISIBLE);
+                                        saveButton.setVisibility(View.INVISIBLE);
                                     }
                                 }
                             })
